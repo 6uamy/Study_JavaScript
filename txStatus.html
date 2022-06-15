@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.0/web3.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+ 
+  <title>P2D txStatus</title>
+
+  <link rel="stylesheet" href="styletx.css">
+  <div class="above">
+
+      <h1 class="P2D" onclick="window.location.reload()">P2D Transaction</h1>
+   
+  </div>
+</head>
+
+<body>
+  <div class="wrapper">
+      <div class="main">
+          <h2>Transaction Details</h2>         
+          <table class="tx-table">
+              <thead class="thead-light">
+                 
+              </thead>
+          </table>
+      </div>
+  </div>
+
+<script>
+
+const ethNetwork = 'https://rinkeby.infura.io/v3/ac5ddd7f1eba46e19a9758f784da4f98';
+const transactionHash =  location.href.split('?')[1];
+// const transactionHash = '0x6c9b434b6fd293fdfec2307440682149775d6f5cae411211d08537b6729779b3';
+
+let web3;
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            web3 = new Web3(new Web3.providers.HttpProvider(ethNetwork)); //'https://rinkeby.infura.io/v3/"Project ID"'
+        }
+
+        // window.onload = function loadTransactions() {
+        //     const url = "https://api-rinkeby.etherscan.io/api?module=account&action=tokentx&contractaddress=0x7cC2a2C2a6f3287c426Dc0D813ac28dd9D947525&address=0xC0c9093Df0fefd899f82aE6735C2e0730eD9D428&page=26&offset=1&startblock=0&endblock=99999999&sort=asc&apikey=EJDU5SI63KXGBVETA58EGTXA4N5GT7BCAG";
+        //     const xhttp = new XMLHttpRequest();
+
+        //     let jsonFile;
+        //     xhttp.onreadystatechange = function () {
+        //         if (this.readyState == 4 && this.status == 200) {
+
+        //             jsonFile = JSON.parse(this.responseText);
+
+        //             jsonFile.result.sort(arrOrder("timeStamp"));
+
+        //             let txTable = document.querySelector('.tx-table');
+
+        //             for (let result of jsonFile.result) {
+        //                 var date = new Date(result.timeStamp * 1000);
+        //                 var tokenSymbol = result.hash;
+        //                 var value = result.value;
+
+        //                 txTable.insertAdjacentHTML('beforeend', `
+        //                     <tr class="tx-table-data">
+        //                         <td>TokenSymbol > ${tokenSymbol}</td>                           
+        //                     </tr>
+        //                     <tr>                                                 
+        //                         <td>Transaction Complete Time > ${date}</td>
+        //                     </tr>
+        //                     <tr>
+        //                         <td>Amount of Donate > ${web3.utils.fromWei(value, 'ether')}</td>
+        //                     </tr>`);
+
+        //                 // Object.keys(result.hash);
+        //                 // console.log(result.hash);
+        //             }
+        //         }
+        //     };
+        //     xhttp.open("GET", url, true);
+        //     xhttp.send();
+
+            web3.eth.getTransactionReceipt(transactionHash, function (error, result){
+
+            let txTable = document.querySelector('.tx-table');
+
+
+            var TransactionHash = result.transactionHash;
+            var Status = result.status;
+            var From = result.from;
+            var To = result.to;
+            var Donation = result.logs[0].topics[2];
+            var gasUsed = result.gasUsed;
+
+            txTable.insertAdjacentHTML('beforeend', `
+            <tr class="tx-table-data">
+                    <td class="status"> ${Status}</td>
+                </tr>    
+            <tr>
+                    <td>Transaction hash > ${TransactionHash}</td>
+              </tr>
+              
+                <tr>
+                    <td>From > ${From}</td>
+                </tr>
+                <tr>
+                    <td>To > ${To}</td>
+                </tr>
+                <tr>
+                    <td>For Donation > ${Donation}</td>
+                </tr>
+                <tr>
+                    <td>Gas Used > ${gasUsed}</td>
+                </tr>`);
+
+                console.log(result);
+            // Object.keys(result.hash);
+            // console.log(result.hash);
+          
+        });
+
+        function arrOrder(key) {
+                      return function (a, b) {
+                          if (a[key] < b[key]) {
+                              return 1;
+                          } else if (a[key] > b[key]) {
+                              return -1;
+                          }
+                          return 0;
+                      }
+                }
+</script>
+
+</body>
+
+<footer class="footer">
+    <script>
+
+    </script>
+</footer>
+</html>
